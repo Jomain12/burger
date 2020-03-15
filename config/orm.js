@@ -16,8 +16,6 @@ function objToSql(ob) {
             if (typeof value === "string" && value.indexOf(" ") >= 0) {
                 value = "'" + value + "'";
             }
-            // e.g. {name: 'Lana Del Grey'} => ["name='Lana Del Grey'"]
-            // e.g. {sleepy: true} => ["sleepy=true"]
             arr.push(key + "=" + value);
         }
     }
@@ -35,6 +33,7 @@ var orm = {
             cb(result);
         });
     },
+
     insertOne: function(table, cols, vals, cb) {
         var queryString = "INSERT INTO " + table;
         queryString += " (";
@@ -44,7 +43,7 @@ var orm = {
         queryString += printQuestionMarks(vals.length);
         queryString += ") ";
 
-        console.log(queryString);
+        // console.log(queryString);
 
         connection.query(queryString, vals, function(err, result) {
             if (err) {
@@ -53,6 +52,7 @@ var orm = {
             cb(result);
         });
     },
+
     updateOne: function(table, objColVals, condition, cb) {
         var queryString = "UPDATE " + table;
         queryString += " SET ";
@@ -60,7 +60,7 @@ var orm = {
         queryString += " WHERE ";
         queryString += condition;
 
-        console.log(queryString);
+        // console.log(queryString);
 
         connection.query(queryString, function(err, result) {
             if (err) {
@@ -69,12 +69,13 @@ var orm = {
             cb(result);
         });
     },
+    
     deleteOne: function(table, condition, cb) {
         var queryString = "DELETE FROM " + table;
         queryString += " WHERE ";
         queryString += condition;
 
-        console.log(queryString);
+        // console.log(queryString);
 
         connection.query(queryString, function(err, result) {
             if (err) {

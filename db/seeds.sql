@@ -1,7 +1,7 @@
-use employee_trackername_db;
+use burgers_db;
 
 INSERT INTO burgers (burger_name, devoured)
-VALUES  ("sex burger", false), 
+VALUES  ("hamburger", false), 
         ("bacon burger", false), 
         ("grill fish burger", false);
 
