@@ -1,102 +1,48 @@
-const log = console.log;
+$(function() {
 
-const burgerTemplate = (burger_name, devoured) => {
-    const burgerContainer = $('<div>').attr({
-        class: 'content-burger__list',
-        id: id
+    $(".create-form").on("submit", function(event) {
+        event.preventDefault();
+
+        var newBurger = {
+            burger_name: $("#newburger").val().trim(),
+            devoured: 0
+        };
+
+        $.ajax("/api/burgers", {
+            type: "POST",
+            data: newBurger
+        }).then(function() {
+            console.log("Added new burger");
+            location.reload();
+        });
     });
-    const img = $('<img>').attr('src', './images/lefteris-kallergis-581884-unsplash.jpg');
-    const name = $('<p>');
-    const button = $('<button>').attr({
-        'data-id': id,
-        class: 'btn btn-default favorites',
-        'data-state': is_favorite
+
+    $(".eatburger").on("click", function(event) {
+        event.preventDefault();
+
+        var id = $(this).data("id");
+        var devouredState = {
+            devoured: 1
+        };
+
+        $.ajax("/api/burgers/" + id, {
+            type: "PUT",
+            data: devouredState
+        }).then(function() {
+            console.log("Burger devoured");
+            location.reload();
+        });
     });
 
-    name.html(burger_name);
-    button.html('add to favorite');
+    $(".trashburger").on("click", function(event) {
+        event.preventDefault();
 
-    burgerContainer.append(img, name, button);
-    return burgerContainer;
-};
+        var id = $(this).data("id");
 
+        $.ajax({
+            type: "DELETE",
+            url: "/api/burgers/" + id
+        }).then(location.reload());
+    });
 
-const displayNewBurger = (burger) => {
-    const name = burger.burger_name;
-    const devoured = burger.devoured;
-    // const is_favorite = burger.is_favorite;
-    const newBurger = burgerTemplate(name, devoured);
-    $('.content-burger').prepend(newBurger);
-    $('input').val('');
-};
-
-const addBurgerFail = (response) => {
-    alert('Burger Failed');
-};
-
-$('button[type=submit]').on('click', function(event) {
-    event.preventDefault(); // prevent the Browser from refreshing
-    const burgerName = $('input[name="burger_name"]').val();
-
-    $.ajax({
-        url: '/add',
-        method: 'POST',
-        data: {
-            burger_name: burger_name
-        }
-    })
-    .then(displayNewBurger)
-    .catch(addBurgerFail);
-});
-
-
-
-// Favorite or Unfavorite burger
-const addBurgerToFavorite = (burger) => {
-    const id = burger.id;
-    $(`#${id}`).remove();
-};
-
-const addBurgerToFavoriteFail = () => {
-    alert('Fail adding it to Favorite');
-};
-
-
-$(document).on('click', '.favorites', function() {
-    const id = $(this).attr('data-id');
-    const value = $(this).attr('data-state');
-
-    let condition = value === '0' ? false : true;
-
-    $.ajax({
-        url: `/${id}/${!condition}`,
-        method: 'PUT'
-    })
-    .then(addBurgerToFavorite)
-    .catch(addBurgerToFavoriteFail);
-});
-
-
-
-const removeBurgerOnDelete = (burger) => {
-    const id = burger.id;
-
-    $(`.all-burgers .burger[data-id=${id}]`).remove();
-};
-
-
-const removeBurgerFailed = () => {
-    alert('Fail deleting burger');
-};
-
-$('.all-burgers .burger button').on('click', function() {
-    const id = $(this).attr('data-id');
-
-
-    $.ajax({
-        url: `/delete/${id}`,
-        method: 'DELETE'
-    })
-    .then(removeBurgerOnDelete)
-    .catch(removeBurgerFailed);
-});
+})

@@ -1,18 +1,24 @@
-const express = require("express");
-const exphbs = require('express-handlebars');
+var express = require("express");
+var bodyParser = require("body-parser");
 
-const routes = require("./routes/route");
+var app = express();
+var PORT = process.env.PORT || 3000;
 
-const port = process.env.port || 3000;
-const app = express();
+app.use(express.static("public"));
 
-//configure express handlebars
-app.engine("handlebars", exphbs({ defaultLayout: "main"}));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.json());
+
+var exphbs = require("express-handlebars");
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
+var routes = require("./controllers/burgercontroller");
 
-app.use("/", routes);
+app.use(routes);
 
-app.listen(port, () => {
-    console.log(`Server is listening at port ${port}`);
+app.listen(PORT, function() {
+    console.log("Server listening on: http://localhost:" + PORT);
 });
